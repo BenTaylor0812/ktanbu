@@ -27,6 +27,7 @@ var position []string
 var reader *bufio.Reader
 var serial string
 var serialOdd bool
+var serialEven bool
 var batteries int
 var batteryLock bool
 var parallelPort bool
@@ -35,27 +36,30 @@ var parallelLock bool
 func main() {
 	reader = bufio.NewReader(os.Stdin)
 	position = []string{"first", "second", "third", "fourth", "fifth"}
-	for gameOver := false; !gameOver; {
-		fmt.Printf("Enter the game you are playing: ")
-		game, _ := reader.ReadString('\n')
-		game = strings.Replace(game, "\r\n", "", -1)
-		switch game {
-		case "word":
-			wordGame()
-		case "wires":
-			wires()
-		case "win":
-			fmt.Println("Well done!")
-		case "loss":
-			fmt.Println("Ah sorry, maybe next time!")
-		case "leave":
-			fmt.Println("Hope you did well!")
-			gameOver = true
-			break
-		default:
-			fmt.Println("Sorry, didn't catch that?")
-		}
-	}
+	complexWires()
+	// for gameOver := false; !gameOver; {
+	// 	fmt.Printf("Enter the game you are playing: ")
+	// 	game, _ := reader.ReadString('\n')
+	// 	game = strings.Replace(game, "\r\n", "", -1)
+	// 	switch game {
+	// 	case "word", "words":
+	// 		wordGame()
+	// 	case "wires", "wire":
+	// 		wires()
+	// 	case "cwires", "cwire", "complexwires", "complex wires":
+	// 		complexWires()
+	// 	case "win", "won":
+	// 		fmt.Println("Well done!")
+	// 	case "loss", "lost", "lose":
+	// 		fmt.Println("Ah sorry, maybe next time!")
+	// 	case "leave":
+	// 		fmt.Println("Hope you did well!")
+	// 		gameOver = true
+	// 		break
+	// 	default:
+	// 		fmt.Println("Sorry, didn't catch that?")
+	// 	}
+	// }
 }
 
 func yesOrNo() string {
@@ -99,6 +103,7 @@ func recieveSerial() {
 		fmt.Printf("Enter the serial number: ")
 		serial = inputString()
 		serialOdd = int(serial[len(serial)-1])%2 == 1
+		serialEven = !serialOdd
 	}
 }
 
@@ -295,4 +300,70 @@ func wordGame() {
 	} else {
 		fmt.Println("Your word is:", words[0])
 	}
+}
+
+func complexWires() {
+	order := []bool{}
+	cWires := make(map[string]string)
+	cWires = map[string]string{
+		"ooo": "c",
+		"ool": "d",
+		"oso": "c",
+		"osl": "b",
+		"roo": "s",
+		"rol": "b",
+		"rso": "c",
+		"rsl": "b",
+		"boo": "s",
+		"bol": "p",
+		"bso": "d",
+		"bsl": "p",
+		"poo": "s",
+		"pol": "s",
+		"pso": "p",
+		"psl": "d",
+	}
+
+	fmt.Printf("Please enter the pattern of wires: ")
+	var combinations []string
+	combination := inputString()
+	for i := 0; i < len(combination); i = i + 3 {
+		combinations = append(combinations, combination[i:i+3])
+	}
+	for _, i := range combinations {
+		switch cWires[i] {
+		case "c":
+			order = append(order, true)
+		case "d":
+			order = append(order, false)
+		case "b":
+			recieveBatteries()
+			if batteries >= 2 {
+				order = append(order, true)
+			} else {
+				order = append(order, false)
+			}
+		case "s":
+			recieveSerial()
+			if serialEven {
+				order = append(order, true)
+			} else {
+				order = append(order, false)
+			}
+		case "p":
+			recieveParallel()
+			if parallelPort {
+				order = append(order, true)
+			} else {
+				order = append(order, false)
+			}
+		}
+	}
+	fmt.Printf("Cut the wire(s) in ")
+	for index, cut := range order {
+		if cut {
+			fmt.Printf("%s, ", position[index])
+		}
+	}
+	fmt.Printf("positions.\n")
 }
