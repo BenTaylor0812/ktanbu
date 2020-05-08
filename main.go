@@ -69,7 +69,6 @@ func yesOrNo() string {
 		case "yes", "y":
 			return "yes"
 		case "no", "n":
-			fmt.Println("Okay then.")
 			return "no"
 		default:
 			fmt.Printf("Please enter yes or no: ")
@@ -294,6 +293,8 @@ func wordGame() {
 		replay := yesOrNo()
 		if replay == "yes" {
 			wordGame()
+		} else {
+			fmt.Println("Okay then.")
 		}
 
 	} else {
