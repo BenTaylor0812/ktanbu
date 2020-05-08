@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -20,16 +21,20 @@ const (
 	cutLast   string = "Cut the last wire."
 )
 
+type gameFunction = func()
+
 var position []string
 var reader *bufio.Reader
 var serial string
 var serialOdd bool
 var batteries int
+var batteryLock bool
 var parallelPort bool
+var parallelLock bool
 
 func main() {
-	position = []string{"first", "second", "third", "fourth", "fifth"}
 	reader = bufio.NewReader(os.Stdin)
+	position = []string{"first", "second", "third", "fourth", "fifth"}
 	for gameOver := false; !gameOver; {
 		fmt.Printf("Enter the game you are playing: ")
 		game, _ := reader.ReadString('\n')
@@ -53,9 +58,40 @@ func main() {
 	}
 }
 
+func yesOrNo() string {
+	var response string
+	for {
+		response = inputString()
+		switch response {
+		case "yes", "y":
+			return "yes"
+		case "no", "n":
+			fmt.Println("Okay then.")
+			return "no"
+		default:
+			fmt.Printf("Please enter yes or no: ")
+			continue
+		}
+	}
+}
+
 func inputString() string {
 	output, _ := reader.ReadString('\n')
 	return strings.Replace(output, "\r\n", "", -1)
+}
+
+func inputInteger() int {
+	var output string
+	for {
+		output = inputString()
+		rVal, err := strconv.Atoi(output)
+		if err != nil {
+			fmt.Printf("Please only enter an integer: ")
+		} else {
+			return rVal
+		}
+	}
+
 }
 
 func recieveSerial() {
@@ -63,6 +99,27 @@ func recieveSerial() {
 		fmt.Printf("Enter the serial number: ")
 		serial = inputString()
 		serialOdd = int(serial[len(serial)-1])%2 == 1
+	}
+}
+
+func recieveParallel() {
+	for !parallelLock {
+		fmt.Printf("Is there a parallel port? ")
+		response := yesOrNo()
+		if response == "yes" {
+			parallelPort = true
+		} else {
+			parallelPort = false
+		}
+		parallelLock = true
+	}
+}
+
+func recieveBatteries() {
+	for !batteryLock {
+		fmt.Printf("How many batteries are there? ")
+		batteries = inputInteger()
+		batteryLock = true
 	}
 }
 
@@ -230,15 +287,11 @@ func wordGame() {
 	}
 	if len(words) == 0 {
 		fmt.Printf("There are no words left. Do you want to try again? (yes, no): ")
-		response := inputString()
-		switch response {
-		case "yes", "y":
+		replay := yesOrNo()
+		if replay == "yes" {
 			wordGame()
-		case "no", "n":
-			fmt.Println("Okay then.")
-		default:
-			fmt.Println("Please enter yes or no.")
 		}
+
 	} else {
 		fmt.Println("Your word is:", words[0])
 	}
