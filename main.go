@@ -30,23 +30,25 @@ var parallelPort bool
 func main() {
 	position = []string{"first", "second", "third", "fourth", "fifth"}
 	reader = bufio.NewReader(os.Stdin)
-	for gameOver := 0; gameOver != 1; {
+	for gameOver := false; !gameOver; {
 		fmt.Printf("Enter the game you are playing: ")
 		game, _ := reader.ReadString('\n')
 		game = strings.Replace(game, "\r\n", "", -1)
 		switch game {
 		case "word":
-			words()
+			wordGame()
 		case "wires":
 			wires()
 		case "win":
 			fmt.Println("Well done!")
 		case "loss":
 			fmt.Println("Ah sorry, maybe next time!")
-		default:
-			fmt.Println("Game over.")
-			gameOver = 1
+		case "leave":
+			fmt.Println("Hope you did well!")
+			gameOver = true
 			break
+		default:
+			fmt.Println("Sorry, didn't catch that?")
 		}
 	}
 }
@@ -172,7 +174,25 @@ func obtainComb() string {
 	return wires
 }
 
-func words() {
+func removeDupes(list []string) []string {
+	var rList []string
+	for _, val := range list {
+		firstInstance := true
+		for _, tVal := range rList {
+			if val == tVal {
+				firstInstance = false
+				break
+			}
+		}
+		if firstInstance {
+			rList = append(rList, val)
+
+		}
+	}
+	return rList
+}
+
+func wordGame() {
 	words := []string{
 		"about", "after", "again", "below", "could",
 		"every", "first", "found", "great", "house",
@@ -182,7 +202,7 @@ func words() {
 		"these", "thing", "think", "three", "water",
 		"where", "which", "world", "would", "write",
 	}
-	for i := 0; i < wordLength && len(words) != 1; i++ {
+	for i := 0; i < wordLength && len(words) > 1; i++ {
 		var letters string
 		possibles := []string{}
 		fmt.Printf("Please enter the letters in the %s position: ", position[i])
@@ -194,7 +214,8 @@ func words() {
 				}
 			}
 		}
-		if len(possibles) != 1 {
+		possibles = removeDupes(possibles)
+		if len(possibles) > 1 {
 			fmt.Printf("Possible words are: ")
 			for i := 0; i < len(possibles); i++ {
 				if i == len(possibles)-1 {
@@ -207,5 +228,18 @@ func words() {
 		}
 		words = possibles
 	}
-	fmt.Println("Your word is:", words[0])
+	if len(words) == 0 {
+		fmt.Printf("There are no words left. Do you want to try again? (yes, no): ")
+		response := inputString()
+		switch response {
+		case "yes", "y":
+			wordGame()
+		case "no", "n":
+			fmt.Println("Okay then.")
+		default:
+			fmt.Println("Please enter yes or no.")
+		}
+	} else {
+		fmt.Println("Your word is:", words[0])
+	}
 }
