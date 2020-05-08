@@ -36,30 +36,29 @@ var parallelLock bool
 func main() {
 	reader = bufio.NewReader(os.Stdin)
 	position = []string{"first", "second", "third", "fourth", "fifth"}
-	complexWires()
-	// for gameOver := false; !gameOver; {
-	// 	fmt.Printf("Enter the game you are playing: ")
-	// 	game, _ := reader.ReadString('\n')
-	// 	game = strings.Replace(game, "\r\n", "", -1)
-	// 	switch game {
-	// 	case "word", "words":
-	// 		wordGame()
-	// 	case "wires", "wire":
-	// 		wires()
-	// 	case "cwires", "cwire", "complexwires", "complex wires":
-	// 		complexWires()
-	// 	case "win", "won":
-	// 		fmt.Println("Well done!")
-	// 	case "loss", "lost", "lose":
-	// 		fmt.Println("Ah sorry, maybe next time!")
-	// 	case "leave":
-	// 		fmt.Println("Hope you did well!")
-	// 		gameOver = true
-	// 		break
-	// 	default:
-	// 		fmt.Println("Sorry, didn't catch that?")
-	// 	}
-	// }
+	for gameOver := false; !gameOver; {
+		fmt.Printf("Enter the game you are playing: ")
+		game, _ := reader.ReadString('\n')
+		game = strings.Replace(game, "\r\n", "", -1)
+		switch game {
+		case "word", "words":
+			wordGame()
+		case "wires", "wire":
+			wires()
+		case "cwires", "cwire", "complexwires", "complex wires":
+			complexWires()
+		case "win", "won":
+			fmt.Println("Well done!")
+		case "loss", "lost", "lose":
+			fmt.Println("Ah sorry, maybe next time!")
+		case "leave":
+			fmt.Println("Hope you did well!")
+			gameOver = true
+			break
+		default:
+			fmt.Println("Sorry, didn't catch that?")
+		}
+	}
 }
 
 func yesOrNo() string {
