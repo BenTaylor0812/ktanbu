@@ -23,32 +23,32 @@ const (
 var position []string
 var reader *bufio.Reader
 var serial string
+var serialOdd bool
 var batteries int
 var parallelPort bool
 
 func main() {
 	position = []string{"first", "second", "third", "fourth", "fifth"}
 	reader = bufio.NewReader(os.Stdin)
-	wires()
-	// 	for gameOver := 0; gameOver != 1; {
-	// 		fmt.Printf("Enter the game you are playing: ")
-	// 		game, _ := reader.ReadString('\n')
-	// 		game = strings.Replace(game, "\r\n", "", -1)
-	// 		switch game {
-	// 		case "word":
-	// 			words()
-	// 		case "wires":
-	// 			wires()
-	// 		case "win":
-	// 			fmt.Println("Well done!")
-	// 		case "loss":
-	// 			fmt.Println("Ah sorry, maybe next time!")
-	// 		default:
-	// 			fmt.Println("Game over.")
-	// 			gameOver = 1
-	// 			break
-	// 		}
-	// 	}
+	for gameOver := 0; gameOver != 1; {
+		fmt.Printf("Enter the game you are playing: ")
+		game, _ := reader.ReadString('\n')
+		game = strings.Replace(game, "\r\n", "", -1)
+		switch game {
+		case "word":
+			words()
+		case "wires":
+			wires()
+		case "win":
+			fmt.Println("Well done!")
+		case "loss":
+			fmt.Println("Ah sorry, maybe next time!")
+		default:
+			fmt.Println("Game over.")
+			gameOver = 1
+			break
+		}
+	}
 }
 
 func inputString() string {
@@ -60,6 +60,7 @@ func recieveSerial() {
 	for serial == "" {
 		fmt.Printf("Enter the serial number: ")
 		serial = inputString()
+		serialOdd = int(serial[len(serial)-1])%2 == 1
 	}
 }
 
@@ -70,6 +71,8 @@ func wires() {
 	red := 0
 	blue := 0
 	yellow := 0
+	black := 0
+	white := 0
 	lastBlue := 0
 	lastRed := 0
 	for i, val := range wires {
@@ -81,6 +84,10 @@ func wires() {
 			lastRed = i
 		} else if string(val) == "y" {
 			yellow++
+		} else if string(val) == "k" {
+			black++
+		} else if string(val) == "w" {
+			white++
 		}
 
 	}
@@ -97,7 +104,7 @@ func wires() {
 		}
 	case 4:
 		recieveSerial()
-		if int(serial[len(serial)-1])%2 == 1 && red > 1 {
+		if serialOdd && red > 1 {
 			fmt.Printf("Cut the last red wire. (The %s wire.)\n", position[lastRed])
 		} else if lastWire == "y" && red == 0 {
 			fmt.Println(cutFirst)
@@ -109,7 +116,26 @@ func wires() {
 			fmt.Println(cutSecond)
 		}
 	case 5:
+		recieveSerial()
+		if lastWire == "k" && serialOdd {
+			fmt.Print(cutFourth)
+		} else if red == 1 && yellow > 1 {
+			fmt.Println(cutFirst)
+		} else if black == 0 {
+			fmt.Println(cutSecond)
+		} else {
+			fmt.Println(cutFirst)
+		}
 	case 6:
+		if yellow == 0 && serialOdd {
+			fmt.Println(cutThird)
+		} else if yellow == 1 && white > 1 {
+			fmt.Println(cutFourth)
+		} else if red == 0 {
+			fmt.Println(cutLast)
+		} else {
+			fmt.Print(cutFourth)
+		}
 	}
 }
 
@@ -117,10 +143,14 @@ func obtainComb() string {
 	var wires string
 	fmt.Printf("Enter the combinations of wires (reading down): ")
 	for {
-		cVal := 0
+		cVal := true
 		wires = inputString()
 		if len(wires) > 6 {
 			fmt.Printf("That is too long, type again: ")
+			continue
+		}
+		if len(wires) < 3 {
+			fmt.Printf("That is too short, type again: ")
 			continue
 		}
 		for i, val := range wires {
@@ -129,11 +159,13 @@ func obtainComb() string {
 			case "k", "w", "b", "r", "y":
 				continue
 			default:
-				fmt.Printf("The value %v in the %s position is incorrect. type again: ", letter, position[i])
-				cVal = 1
+				if cVal {
+					fmt.Printf("The value %v in the %s position is incorrect. type again: ", letter, position[i])
+					cVal = false
+				}
 			}
 		}
-		if cVal == 0 {
+		if cVal {
 			break
 		}
 	}
