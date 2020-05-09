@@ -35,30 +35,33 @@ var parallelLock bool
 
 func main() {
 	reader = bufio.NewReader(os.Stdin)
-	position = []string{"first", "second", "third", "fourth", "fifth"}
-	for gameOver := false; !gameOver; {
-		fmt.Printf("Enter the game you are playing: ")
-		game, _ := reader.ReadString('\n')
-		game = strings.Replace(game, "\r\n", "", -1)
-		switch game {
-		case "word", "words":
-			wordGame()
-		case "wires", "wire":
-			wires()
-		case "cwires", "cwire", "complexwires", "complex wires":
-			complexWires()
-		case "win", "won":
-			fmt.Println("Well done!")
-		case "loss", "lost", "lose":
-			fmt.Println("Ah sorry, maybe next time!")
-		case "leave":
-			fmt.Println("Hope you did well!")
-			gameOver = true
-			break
-		default:
-			fmt.Println("Sorry, didn't catch that?")
-		}
-	}
+	button()
+	// position = []string{"first", "second", "third", "fourth", "fifth"}
+	// for gameOver := false; !gameOver; {
+	// 	fmt.Printf("Enter the game you are playing: ")
+	// 	game, _ := reader.ReadString('\n')
+	// 	game = strings.Replace(game, "\r\n", "", -1)
+	// 	switch game {
+	// 	case "wires", "wire":
+	// 		wires()
+	// 	case "button":
+	// 		button()
+	// 	case "word", "words":
+	// 		wordGame()
+	// 	case "cwires", "cwire", "complexwires", "complex wires":
+	// 		complexWires()
+	// 	case "win", "won":
+	// 		fmt.Println("Well done!")
+	// 	case "loss", "lost", "lose":
+	// 		fmt.Println("Ah sorry, maybe next time!")
+	// 	case "leave":
+	// 		fmt.Println("Hope you did well!")
+	// 		gameOver = true
+	// 		break
+	// 	default:
+	// 		fmt.Println("Sorry, didn't catch that?")
+	// 	}
+	// }
 }
 
 func yesOrNo() string {
@@ -118,11 +121,83 @@ func recieveParallel() {
 	}
 }
 
-func recieveBatteries() {
+func recieveBatteries() int {
 	for !batteryLock {
 		fmt.Printf("How many batteries are there? ")
 		batteries = inputInteger()
 		batteryLock = true
+	}
+	return batteries
+}
+
+func findButtonColour() string {
+	fmt.Printf("Enter the colour of the button: ")
+	return inputString()
+}
+
+func findButtonText(buttonText *string) string {
+	if *buttonText == "" {
+		fmt.Printf("Enter the text on the button: ")
+		colour := inputString()
+		switch colour {
+		case "a", "abort":
+			*buttonText = "abort"
+		case "d", "detonate":
+			*buttonText = "detonate"
+		case "h", "hold":
+			*buttonText = "hold"
+		}
+	}
+	return *buttonText
+}
+
+func findLabelIndicator(label string, labelInd *bool) bool {
+	fmt.Printf("Is there a lit indicator with the label '%s'?: ", label)
+	if yesOrNo() == "yes" {
+		*labelInd = true
+	} else {
+		*labelInd = false
+	}
+	return *labelInd
+}
+
+func holdButton() {
+	fmt.Println("Press and hold the button. There should be a band that lights up.")
+	fmt.Printf("What colour is it?: ")
+	bandColour := inputString()
+	switch bandColour {
+	case "blue", "b":
+		fmt.Println("Release when the timer has a 4 in any position.")
+	case "yellow", "y":
+		fmt.Println("Release when the timer has a 5 in any position.")
+	default:
+		fmt.Println("Release when the timer has a 1 in any position.")
+	}
+}
+
+func releaseButton() {
+	fmt.Println("Press and immediately release the button.")
+}
+
+func button() {
+	buttonColour := findButtonColour()
+	var buttonText string
+	var carInd bool
+	var frkInd bool
+	if buttonColour == "blue" && findButtonText(&buttonText) == "abort" {
+		holdButton()
+	} else if recieveBatteries() > 1 && findButtonText(&buttonText) == "detonate" {
+		releaseButton()
+	} else if buttonColour == "white" && findLabelIndicator("CAR", &carInd) {
+		holdButton()
+	} else if recieveBatteries() > 2 && findLabelIndicator("FRK", &frkInd) {
+		releaseButton()
+	} else if buttonColour == "yellow" {
+		holdButton()
+	} else if buttonColour == "red" && findButtonText(&buttonText) == "hold" {
+		releaseButton()
+	} else {
+		holdButton()
 	}
 }
 
@@ -155,7 +230,7 @@ func wires() {
 	}
 	switch wireLength {
 	case 3:
-		if red != 0 {
+		if red == 0 {
 			fmt.Println(cutSecond)
 		} else if string(wires[wireLength-1]) == "w" {
 			fmt.Println(cutLast)
