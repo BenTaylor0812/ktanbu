@@ -2,13 +2,18 @@ package ktanbu
 
 const (
 	cutFirst  string = "Cut the first wire."
-	cutSecond string = "Cut the second wire."
-	cutThird  string = "Cut the third wire."
-	cutFourth string = "Cut the fourth wire."
-	cutFifth  string = "Cut the fifth wire."
-	cutLast   string = "Cut the last wire."
+	cutSecond        = "Cut the second wire."
+	cutThird         = "Cut the third wire."
+	cutFourth        = "Cut the fourth wire."
+	cutFifth         = "Cut the fifth wire."
+	cutLast          = "Cut the last wire."
 )
 
 const (
 	wordLength int = 5
+)
+
+const (
+	vowelPresent   int = 0
+	noVowelPresent     = 1
 )

@@ -25,3 +25,8 @@ For the button module enter "button" at the prompt. Then it should be a matter o
 At the prompt when asked type in "complex wires". Then it will ask you for the combination. This is where it gets kinda convoluted.
 Imagine for each wire you need to give the software details for each wire. The colour, if there is an led and if there is a star.
 For the colour type "w", "r", "b" or "p" for white, red, blue and purple (blue and red). Then if there is a star type "s", if not type "o". Then for an led type "l" if there is and "o" if there is not. So a white wire with no led or star would be "woo", a purple wire with a star but no LED would be "pso". And just continue for each wire, do **not** seperate with spaces.
+
+## Simon says (work in progress)
+At the prompt enter "simon" or "simon says". You will be asked for the number of strike you have, and maybe the serial number if you haven't already typed it in. After this it will ask you for the pattern of the flashes. For red type r and press enter, blue press b and enter, green is g and yellow is y. It will return with the order you need to press. At each step you only need to press the most recent flash as the program will store the order you have already typed in.
+
+When you are done press d and enter and the module will quit. If you make a mistake press e and enter, this will automatically update the strikes and restart the module.

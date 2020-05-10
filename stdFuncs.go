@@ -45,8 +45,14 @@ func recieveSerial() {
 	for serial == "" {
 		fmt.Printf("Enter the serial number: ")
 		serial = inputString()
-		serialOdd = int(serial[len(serial)-1])%2 == 1
-		serialEven = !serialOdd
+	}
+	serialOdd = int(serial[len(serial)-1])%2 == 1
+	serialEven = !serialOdd
+	for _, i := range serial {
+		switch string(i) {
+		case "a", "e", "i", "o", "u":
+			serialVowel = true
+		}
 	}
 }
 

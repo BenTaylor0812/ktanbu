@@ -25,6 +25,8 @@ func main() {
 			ktanbu.Password()
 		case "cwires", "cwire", "complexwires", "complex wires":
 			ktanbu.ComplexWires()
+		case "simon", "simonsays", "simon says":
+			ktanbu.Simon()
 		case "win", "won":
 			fmt.Println("Well done!")
 		case "loss", "lost", "lose":
