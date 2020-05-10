@@ -24,4 +24,4 @@ For the button module enter "button" at the prompt. Then it should be a matter o
 ## Complex wires
 At the prompt when asked type in "complex wires". Then it will ask you for the combination. This is where it gets kinda convoluted.
 Imagine for each wire you need to give the software details for each wire. The colour, if there is an led and if there is a star.
-For the colour type "o", "r", "b" or "p" for white, red, blue and purple (blue and red). Then if there is a star type "s", if not type "o". Then for an led type "l" if there is and "o" if there is not. So a white wire with no led or star would be "ooo", a purple wire with a star but no LED would be "pso". And just continue for each wire, do **not** seperate with spaces.
+For the colour type "w", "r", "b" or "p" for white, red, blue and purple (blue and red). Then if there is a star type "s", if not type "o". Then for an led type "l" if there is and "o" if there is not. So a white wire with no led or star would be "woo", a purple wire with a star but no LED would be "pso". And just continue for each wire, do **not** seperate with spaces.

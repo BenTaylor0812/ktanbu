@@ -380,10 +380,10 @@ func complexWires() {
 	order := []bool{}
 	cWires := make(map[string]string)
 	cWires = map[string]string{
-		"ooo": "c",
-		"ool": "d",
-		"oso": "c",
-		"osl": "b",
+		"woo": "c",
+		"wol": "d",
+		"wso": "c",
+		"wsl": "b",
 		"roo": "s",
 		"rol": "b",
 		"rso": "c",
